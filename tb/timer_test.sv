@@ -418,25 +418,27 @@ module timer_test #(
         stop_and_clear();
     endtask
 
-    // randomized register traffic, checked cycle by cycle against the model
+    // randomized register traffic, checked cycle by cycle against the model.
+    // Every random value is drawn in its own statement so the stream is
+    // reproducible on any simulator.
     task automatic test_random(int transfers);
         logic [11:0] mapped_regs[4] = '{CONTROL, LIMIT, COUNT, STATUS};
-        logic [11:0] bad_addr;
-        logic [31:0] v;
+        logic [31:0] op, r1, r2, r3, v;
         logic        err;
         repeat (transfers) begin
-            case (rand32() % 10)
-                0, 1: reg_write(CONTROL, (rand32() & 32'h6) | (chance(75) ? EN : 32'd0));
-                2, 3: reg_write(LIMIT, chance(85) ? rand32() % 40 : rand32());
-                4:    reg_write(STATUS, rand32());
-                5, 6: reg_read(mapped_regs[rand32() % 4], v);
-                7: begin
-                    bad_addr = chance(30) ? COUNT : 12'(rand32() | 32'h010);
-                    apb_xfer(chance(50), bad_addr, rand32(), v, err);
-                end
-                default: idle(int'(rand32() % 12));
+            op = rand32() % 10;
+            r1 = rand32();
+            r2 = rand32();
+            r3 = rand32();
+            case (op)
+                0, 1: reg_write(CONTROL, (r1 & 32'h6) | ((r2 % 100) < 75 ? EN : 32'd0));
+                2, 3: reg_write(LIMIT, (r2 % 100) < 85 ? r1 % 40 : r1);
+                4:    reg_write(STATUS, r1);
+                5, 6: reg_read(mapped_regs[r1 % 4], v);
+                7:    apb_xfer(r2[31], (r2 % 100) < 30 ? COUNT : 12'(r1 | 32'h010), r1, v, err);
+                default: idle(int'(r1 % 12));
             endcase
-            if (rand32() % 500 == 0) async_reset();
+            if (r3 % 500 == 0) async_reset();
         end
     endtask
 

@@ -38,7 +38,7 @@ model that compares the whole register state with the design on every cycle.
 | **Expiry period** | LIMIT + 1 cycles |
 | **Interrupt** | level `irq = EXPIRED & IRQ_EN` |
 | **Error response** | `PSLVERR` for unmapped addresses and for writes to COUNT; no side effects |
-| **Verification** | 2 configurations · 28,904 cycles · 6,623 APB transfers · 159,862 checks · 13 SVA properties · **0 errors** |
+| **Verification** | 2 configurations · 28,807 cycles · 6,616 APB transfers · 159,374 checks · 13 SVA properties · **0 errors** |
 | **Quality** | Verilator `-Wall` lint clean; Yosys synthesis clean (68 flip-flops) |
 
 ## Register map
@@ -127,8 +127,8 @@ flowchart LR
 
 | Configuration | Cycles | APB transfers | Wait cycles | PSLVERR | Expiries (one-shot / periodic) | Async resets | Checks | Errors |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
-| 0 wait states | 11,095 | 3,316 | 0 | 366 | 146 / 383 | 9 | 63,163 | 0 |
-| 2 wait states | 17,809 | 3,307 | 6,614 | 336 | 176 / 604 | 16 | 96,699 | 0 |
+| 0 wait states | 11,200 | 3,298 | 0 | 344 | 141 / 299 | 9 | 63,641 | 0 |
+| 2 wait states | 17,607 | 3,318 | 6,636 | 340 | 168 / 564 | 9 | 95,733 | 0 |
 
 ### The testbench catches real bugs
 
