@@ -1,0 +1,31 @@
+name: tests
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  lint-simulate-synthesize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Install Verilator and Yosys
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y verilator yosys
+
+      - name: Tool versions
+        run: |
+          verilator --version
+          yosys -V
+
+      - name: Lint
+        run: make lint
+
+      - name: Simulate
+        run: make test
+
+      - name: Synthesize
+        run: make synth

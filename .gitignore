@@ -1,0 +1,3 @@
+build/
+*.vcd
+.DS_Store
